@@ -120,15 +120,15 @@ const AIDiagnostics: React.FC = () => {
     // If newlines were removed, split won't work as expected if there were multiple lines.
     // But typically 03 response is single line or continuous stream.
     // We will treat cleanData as a potential single line response.
-    const lines: string[] = cleanData.match(/43[0-9A-Fa-f]+/g) || [];
+    const lines = cleanData.match(/43[0-9A-Fa-f]+/g);
     
-    const firstLine = lines[0];
-    
-    if (!firstLine) {
+    if (!lines || lines.length === 0) {
       setDtcs([]);
       setStatusMessage(t('diagnostics.obd_no_codes_found'));
       return;
     }
+    
+    const firstLine = lines[0];
 
     if (firstLine.substring(2) === '000000000000' || firstLine.length <= 2) {
       setDtcs([]);

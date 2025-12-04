@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Appointment, Vehicle, Client } from '../types';
@@ -151,7 +152,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ isDashboardView = fal
   return (
     <Card>
       <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-        <h2 className="text-xl font-bold">{t('views.appointments')}</h2>
+        <h2 className="text-xl font-bold">{t('nav.appointments', 'Rendez-vous')}</h2>
         <Button onClick={handleScheduleClick} icon={<PlusIcon />}>{t('appointments.schedule')}</Button>
       </div>
       <TableView />

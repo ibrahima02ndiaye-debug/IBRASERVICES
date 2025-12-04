@@ -1,5 +1,6 @@
+
 {
-  "views": {
+  "nav": {
     "dashboard": "Dashboard",
     "vehicles": "Vehicles",
     "clients": "Clients",

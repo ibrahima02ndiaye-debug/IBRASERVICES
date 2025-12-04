@@ -5,13 +5,41 @@ import { query } from '../db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-default-secret-key';
 
-// Placeholder for user registration
 export const register = async (req: Request, res: Response) => {
-    // In a real app, you would validate input, hash the password, and save the user
-    res.status(501).json({ message: 'Registration not implemented.' });
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    try {
+        // Check if user exists
+        const userCheck = await query('SELECT * FROM users WHERE email = $1', [email]);
+        if (userCheck.rows.length > 0) {
+            return res.status(409).json({ message: 'User already exists.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const result = await query(
+            'INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role',
+            [name, email, hashedPassword, role]
+        );
+
+        const newUser = result.rows[0];
+        const token = jwt.sign(
+            { id: newUser.id, role: newUser.role },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(201).json({ token, user: newUser });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
 };
 
-// Placeholder for user login
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -20,35 +48,34 @@ export const login = async (req: Request, res: Response) => {
     }
 
     try {
-        // This is a placeholder. A real implementation would query a 'users' table.
-        // We'll mock a user for demonstration purposes.
-        const mockUser = {
-            id: 'user-123',
-            email: 'test@garage.com',
-            // A real hash for "password123"
-            passwordHash: '$2a$10$f/9S5gZ3g3B4Z3iX4p8n9u.wK.xY9.Z.d9Y.J/8p7n6H.oI.oR7hG',
-            role: 'Garage'
-        };
-
-        if (email !== mockUser.email) {
+        const result = await query('SELECT * FROM users WHERE email = $1', [email]);
+        
+        if (result.rows.length === 0) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
-        // const isMatch = await bcrypt.compare(password, mockUser.passwordHash);
-        // Bypassing hash check for this simple placeholder as bcrypt might not be installed.
-        const isMatch = password === "password123";
+        const user = result.rows[0];
+        const isMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
         const token = jwt.sign(
-            { id: mockUser.id, role: mockUser.role },
+            { id: user.id, role: user.role },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        res.json({ token, user: { id: mockUser.id, email: mockUser.email, role: mockUser.role } });
+        res.json({ 
+            token, 
+            user: { 
+                id: user.id, 
+                name: user.name, 
+                email: user.email, 
+                role: user.role 
+            } 
+        });
 
     } catch (error) {
         console.error('Login error:', error);

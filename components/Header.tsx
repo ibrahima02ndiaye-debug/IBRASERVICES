@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../contexts/AppContext';
@@ -26,12 +27,26 @@ const Header: React.FC = () => {
     i18n.changeLanguage(lang);
   };
 
-  // Normalize view name for translation key (e.g., 'client-detail' -> 'client_detail')
-  const viewTitleKey = `views.${currentView.replace('-', '_')}`;
+  const getTitle = (view: string) => {
+    switch(view) {
+        case 'dashboard': return t('nav.dashboard', 'Tableau de bord');
+        case 'vehicles': return t('nav.vehicles', 'Véhicules');
+        case 'clients': return t('nav.clients', 'Clients');
+        case 'client-detail': return t('nav.client_detail', 'Détails du client');
+        case 'appointments': return t('nav.appointments', 'Rendez-vous');
+        case 'personnel': return t('nav.personnel', 'Personnel');
+        case 'accounting': return t('nav.accounting', 'Comptabilité');
+        case 'partners': return t('nav.partners', 'Partenaires');
+        case 'messages': return t('nav.messages', 'Messagerie');
+        case 'diagnostics': return t('nav.diagnostics', 'Diagnostic IA');
+        case 'inventory': return t('nav.inventory', 'Inventaire');
+        default: return t(`nav.${view.replace('-', '_')}`, view.charAt(0).toUpperCase() + view.slice(1));
+    }
+  };
 
   return (
     <header className="flex-shrink-0 bg-white/70 dark:bg-gray-900/60 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 flex items-center justify-between p-4 shadow-sm">
-      <h2 className="text-2xl font-bold text-gray-950 dark:text-white">{t(viewTitleKey)}</h2>
+      <h2 className="text-2xl font-bold text-gray-950 dark:text-white">{getTitle(currentView)}</h2>
       <div className="flex items-center space-x-4">
 
         <div className="flex items-center space-x-2 bg-gray-200 dark:bg-gray-800 rounded-full p-1">
