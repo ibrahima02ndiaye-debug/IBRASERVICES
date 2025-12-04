@@ -1,0 +1,57 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAppContext } from '../contexts/AppContext';
+import Card from './common/Card';
+import Button from './common/Button';
+import { ArrowLeftIcon } from './icons/Icons';
+
+// MOCK DATA until API is connected
+const MOCK_CLIENTS = [
+    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St, Anytown, USA' },
+    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave, Anytown, USA' },
+];
+
+const ClientDetail: React.FC = () => {
+  const { selectedClientId, setCurrentView } = useAppContext();
+  const { t } = useTranslation();
+
+  // In a real app, you'd fetch this data from an API
+  const client = MOCK_CLIENTS.find(c => c.id === selectedClientId);
+
+  if (!client) {
+    return (
+      <Card>
+        <div className="p-6 text-center">
+          <h2 className="text-xl font-bold">{t('clients.not_found')}</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            {t('clients.not_found_description')}
+          </p>
+          <Button onClick={() => setCurrentView('clients')} className="mt-4">
+            {t('clients.back_to_list')}
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+       <Button onClick={() => setCurrentView('clients')} variant="secondary" icon={<ArrowLeftIcon />}>
+            {t('clients.back_to_list')}
+        </Button>
+      <Card>
+        <div className="p-6">
+          <h2 className="text-2xl font-bold">{client.name}</h2>
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 dark:text-gray-300">
+            <p><strong>{t('common.email')}:</strong> <a href={`mailto:${client.email}`} className="text-blue-500">{client.email}</a></p>
+            <p><strong>{t('common.phone')}:</strong> <a href={`tel:${client.phone}`} className="text-blue-500">{client.phone}</a></p>
+            <p className="md:col-span-2"><strong>{t('common.address')}:</strong> {client.address}</p>
+          </div>
+        </div>
+      </Card>
+      {/* TODO: Add sections for client's vehicles, appointments, etc. */}
+    </div>
+  );
+};
+
+export default ClientDetail;

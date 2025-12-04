@@ -1,0 +1,8 @@
+{
+  "name": "Copy of IBRA Services",
+  "description": "Système de gestion tout-en-un pour IBRA Services : Mécanique, Taxi, Livraison et Climatisation.",
+  "requestFramePermissions": [
+    "camera",
+    "bluetooth"
+  ]
+}

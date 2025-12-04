@@ -1,0 +1,19 @@
+import React, { Suspense } from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+// FIX: The i18n configuration is part of the client-side setup. Assuming a mono-repo structure, this path from root is plausible.
+import './client/src/i18n'; // Initialize i18next
+
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <Suspense fallback="Loading...">
+      <App />
+    </Suspense>
+  </React.StrictMode>
+);

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IBRA Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gray: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a',
+                950: '#020617',
+              },
+              blue: {
+                ...tailwind.colors.blue,
+                600: '#2563eb', // A slightly brighter blue
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #94a3b8;
+        border-radius: 10px;
+        border: 2px solid #f1f5f9;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background-color: #475569;
+        border-color: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #64748b;
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background-color: #334155;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.17.0",
+    "vite": "https://aistudiocdn.com/vite@^7.1.6",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.3",
+    "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "express": "https://aistudiocdn.com/express@^5.1.0",
+    "pg": "https://aistudiocdn.com/pg@^8.16.3",
+    "dotenv": "https://aistudiocdn.com/dotenv@^17.2.2",
+    "react-i18next": "https://aistudiocdn.com/react-i18next@^15.7.3",
+    "i18next-http-backend": "https://aistudiocdn.com/i18next-http-backend@^3.0.2",
+    "i18next-browser-languagedetector": "https://aistudiocdn.com/i18next-browser-languagedetector@^8.2.0",
+    "i18next": "https://aistudiocdn.com/i18next@^25.5.2",
+    "jsonwebtoken": "https://aistudiocdn.com/jsonwebtoken@^9.0.2",
+    "bcryptjs": "https://aistudiocdn.com/bcryptjs@^3.0.2"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-100 dark:bg-gray-950">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
