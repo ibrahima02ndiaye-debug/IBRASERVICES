@@ -5,14 +5,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import Input from '../common/Input';
 import Select from '../common/Select';
 import Button from '../common/Button';
-import { SearchIcon, CheckCircleIcon, CloudIcon } from '../icons/Icons';
-// import { getClients } from '../../services/api';
-
-// MOCK DATA
-const MOCK_CLIENTS: Client[] = [
-    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St' },
-    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave' },
-];
+import { SearchIcon, CloudIcon } from '../icons/Icons';
+import { getClients } from '../../client/src/services/api';
 
 interface AddVehicleFormProps {
   onAdd: (vehicleData: Omit<Vehicle, 'id'>) => void;
@@ -28,15 +22,13 @@ const AddVehicleForm: React.FC<AddVehicleFormProps> = ({ onAdd }) => {
   const [vin, setVin] = useState('');
   const [licensePlate, setLicensePlate] = useState('');
   const [mileage, setMileage] = useState<number>(0);
-  const [ownerId, setOwnerId] = useState(userRole === 'Client' ? 'cli-2' : ''); 
+  const [ownerId, setOwnerId] = useState(''); 
   const [status, setStatus] = useState<Vehicle['status']>('Available');
   const [isLookingUp, setIsLookingUp] = useState(false);
-  const [dbStatus, setDbStatus] = useState<'idle' | 'connected'>('connected');
   
   useEffect(() => {
       if (userRole === 'Garage') {
-        // getClients().then(setClients).catch(console.error);
-        setClients(MOCK_CLIENTS); 
+        getClients().then(setClients).catch(console.error);
       }
   }, [userRole]);
 
@@ -45,54 +37,26 @@ const AddVehicleForm: React.FC<AddVehicleFormProps> = ({ onAdd }) => {
       alert(t('forms.error_invalid_vin'));
       return;
     }
-    
-    setIsLookingUp(true);
-    // Simulate robust database lookup
-    setTimeout(() => {
-      // Mock DB: Common patterns
-      const mockDb = [
-         { vinStart: '1G1', make: 'Chevrolet', model: 'Malibu', year: 2022 },
-         { vinStart: 'JM1', make: 'Mazda', model: 'CX-5', year: 2023 },
-         { vinStart: 'WBA', make: 'BMW', model: '3 Series', year: 2021 },
-         { vinStart: 'JTE', make: 'Toyota', model: 'Corolla', year: 2020 },
-         { vinStart: 'VF1', make: 'Renault', model: 'Clio', year: 2022 },
-         { vinStart: 'VF3', make: 'Peugeot', model: '208', year: 2021 }
-      ];
-      
-      const found = mockDb.find(v => vin.toUpperCase().startsWith(v.vinStart));
-      
-      if (found) {
-        setMake(found.make);
-        setModel(found.model);
-        setYear(found.year);
-      } else {
-        // Fallback random data for demo experience
-        const randoms = [
-            { make: 'Ford', model: 'F-150', year: 2024 },
-            { make: 'Honda', model: 'Accord', year: 2019 },
-            { make: 'Volkswagen', model: 'Golf', year: 2021 }
-        ];
-        const r = randoms[Math.floor(Math.random() * randoms.length)];
-        setMake(r.make);
-        setModel(r.model);
-        setYear(r.year);
-      }
-      setIsLookingUp(false);
-    }, 800);
+    // Future integration: Call real VIN API here
+    alert("VIN Database lookup is not configured.");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!make || !model || !ownerId) {
-      alert('Make, Model, and Owner are required.');
+    if (!make || !model) {
+      alert('Make and Model are required.');
       return;
     }
-    onAdd({ make, model, year, vin, licensePlate, mileage, ownerId, status });
+    // For Garage role, ownerId is required
+    if (userRole === 'Garage' && !ownerId) {
+        alert('Owner is required.');
+        return;
+    }
+    onAdd({ make, model, year, vin, licensePlate, mileage, ownerId: userRole === 'Client' ? 'self' : ownerId, status });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Database Status Indicator */}
       <div className="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-md border border-blue-100 dark:border-blue-800">
         <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1">
              <CloudIcon className="w-4 h-4" /> 
@@ -113,7 +77,6 @@ const AddVehicleForm: React.FC<AddVehicleFormProps> = ({ onAdd }) => {
         </Select>
       )}
 
-      {/* Auto-Registration Section */}
       <div className="flex items-end gap-2">
          <div className="flex-1">
             <Input 

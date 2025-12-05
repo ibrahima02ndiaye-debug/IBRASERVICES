@@ -1,19 +1,12 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIX: Removed import from obsolete constants.ts.
 import { InventoryItem, Partner } from '../../types';
 import { useAppContext } from '../../contexts/AppContext';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import Select from '../common/Select';
-// import { getPartners } from '../../services/api';
-
-// MOCK DATA until API is connected
-const MOCK_PARTNERS: Partner[] = [
-    { id: 'part-1', name: 'Auto Parts Pro', type: 'Parts Supplier', contactPerson: 'Mike', email: 'mike@app.com', phone: '555-0201' },
-];
+import { getPartners } from '../../client/src/services/api';
 
 interface AddInventoryItemFormProps {
   onAdd: (itemData: Omit<InventoryItem, 'id'>) => void;
@@ -30,18 +23,13 @@ const AddInventoryItemForm: React.FC<AddInventoryItemFormProps> = ({ onAdd }) =>
   const [supplier, setSupplier] = useState('');
 
   useEffect(() => {
-    // getPartners().then(allPartners => {
-    //   const suppliers = allPartners.filter(p => p.type === 'Parts Supplier');
-    //   setPartners(suppliers);
-    //   if (suppliers.length > 0) {
-    //     setSupplier(suppliers[0].name);
-    //   }
-    // });
-    const suppliers = MOCK_PARTNERS.filter(p => p.type === 'Parts Supplier');
-    setPartners(suppliers);
-    if (suppliers.length > 0) {
-      setSupplier(suppliers[0].name);
-    }
+    getPartners().then(allPartners => {
+      const suppliers = allPartners.filter(p => p.type === 'Parts Supplier');
+      setPartners(suppliers);
+      if (suppliers.length > 0) {
+        setSupplier(suppliers[0].name);
+      }
+    }).catch(console.error);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {

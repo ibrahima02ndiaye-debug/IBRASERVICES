@@ -2,8 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../contexts/AppContext';
-import { SunIcon, MoonIcon, GarageIcon, UsersIcon, CloseIcon } from './icons/Icons';
-import Button from './common/Button';
+import { SunIcon, MoonIcon, GarageIcon, UsersIcon } from './icons/Icons';
 
 const Header: React.FC = () => {
   const { userRole, setUserRole, theme, setTheme, currentView, logout } = useAppContext();
@@ -40,13 +39,13 @@ const Header: React.FC = () => {
         case 'messages': return t('nav.messages', 'Messagerie');
         case 'diagnostics': return t('nav.diagnostics', 'Diagnostic IA');
         case 'inventory': return t('nav.inventory', 'Inventaire');
-        default: return t(`nav.${view.replace('-', '_')}`, view.charAt(0).toUpperCase() + view.slice(1));
+        default: return t(`nav.${view}`, view.replace('-', ' '));
     }
   };
 
   return (
-    <header className="flex-shrink-0 bg-white/70 dark:bg-gray-900/60 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 flex items-center justify-between p-4 shadow-sm">
-      <h2 className="text-2xl font-bold text-gray-950 dark:text-white">{getTitle(currentView)}</h2>
+    <header className="flex-shrink-0 bg-white/70 dark:bg-gray-900/60 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 flex items-center justify-between p-4 shadow-sm z-10 relative">
+      <h2 className="text-2xl font-bold text-gray-950 dark:text-white capitalize">{getTitle(currentView)}</h2>
       <div className="flex items-center space-x-4">
 
         <div className="flex items-center space-x-2 bg-gray-200 dark:bg-gray-800 rounded-full p-1">

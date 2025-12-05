@@ -6,15 +6,8 @@ import Card from './common/Card';
 import Button from './common/Button';
 import { PlusIcon, SearchIcon } from './icons/Icons';
 import AddClientForm from './forms/AddClientForm';
-import { getClients } from '../client/src/services/api';
+import { getClients, createClient } from '../client/src/services/api';
 import Skeleton from './common/Skeleton';
-
-// FALLBACK DATA (If DB is empty or server offline)
-const MOCK_CLIENTS: Client[] = [
-    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St, Anytown, USA' },
-    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave, Anytown, USA' },
-    { id: 'cli-3', name: 'Bob Johnson', email: 'bob.j@example.com', phone: '555-9012', address: '789 Pine Ln, Anytown, USA' },
-];
 
 const ClientList: React.FC = () => {
   const { openModal, closeModal, setCurrentView, setSelectedClientId } = useAppContext();
@@ -23,20 +16,20 @@ const ClientList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        const data = await getClients();
+        setClients(data);
+    } catch (error) {
+        console.error("Failed to fetch clients:", error);
+        setClients([]);
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const data = await getClients();
-            setClients(data);
-        } catch (error) {
-            console.error("Failed to fetch clients (Server might be offline):", error);
-            // Fallback to mock data so UI doesn't break during demo
-            setClients(MOCK_CLIENTS);
-        } finally {
-            setIsLoading(false);
-        }
-    };
     fetchData();
   }, []);
 
@@ -46,14 +39,15 @@ const ClientList: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
   
-  const handleAddNewClient = (clientData: Omit<Client, 'id'>) => {
-    // In real app, POST to API here
-    const newClient: Client = {
-      ...clientData,
-      id: `cli-${Date.now()}`
-    };
-    setClients(prev => [newClient, ...prev]);
-    closeModal();
+  const handleAddNewClient = async (clientData: Omit<Client, 'id'>) => {
+    try {
+        await createClient(clientData);
+        closeModal();
+        fetchData();
+    } catch (error) {
+        console.error("Failed to create client", error);
+        alert("Failed to create client.");
+    }
   };
 
   const handleAddClientClick = () => {
@@ -106,7 +100,7 @@ const ClientList: React.FC = () => {
             ) : filteredClients.length === 0 ? (
                 <tr>
                     <td colSpan={3} className="p-8 text-center text-gray-500">
-                        No clients found.
+                        {t('clients.not_found')}
                     </td>
                 </tr>
             ) : (

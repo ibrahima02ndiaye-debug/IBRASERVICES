@@ -21,16 +21,27 @@ export const register = async (req: Request, res: Response) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
+        // Insert user
         const result = await query(
             'INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role',
             [name, email, hashedPassword, role]
         );
 
         const newUser = result.rows[0];
+
+        // Also create a Client profile if the role is Client
+        if (role === 'Client') {
+            const clientId = `cli-${Date.now()}`;
+            await query(
+                'INSERT INTO clients (id, user_id, name, email) VALUES ($1, $2, $3, $4)',
+                [clientId, newUser.id, name, email]
+            );
+        }
+
         const token = jwt.sign(
             { id: newUser.id, role: newUser.role },
             JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '12h' }
         );
 
         res.status(201).json({ token, user: newUser });
@@ -64,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
         const token = jwt.sign(
             { id: user.id, role: user.role },
             JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '12h' }
         );
 
         res.json({ 

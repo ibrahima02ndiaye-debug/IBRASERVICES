@@ -1,22 +1,13 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIX: Removed import from obsolete constants.ts.
 import { InventoryItem } from '../types';
 import { useAppContext } from '../contexts/AppContext';
 import Card from './common/Card';
 import Button from './common/Button';
 import { PlusIcon, SearchIcon } from './icons/Icons';
 import AddInventoryItemForm from './forms/AddInventoryItemForm';
-// import { getInventory } from '../services/api';
-
-// MOCK DATA until API is connected
-const MOCK_INVENTORY: InventoryItem[] = [
-    { id: 'inv-1', name: 'Oil Filter', sku: 'OF-101', quantity: 50, lowStockThreshold: 10, supplier: 'Auto Parts Pro' },
-    { id: 'inv-2', name: 'Spark Plug', sku: 'SP-202', quantity: 120, lowStockThreshold: 25, supplier: 'Auto Parts Pro' },
-    { id: 'inv-3', name: 'Brake Pads (Set)', sku: 'BP-303', quantity: 8, lowStockThreshold: 5, supplier: 'Auto Parts Pro' },
-];
+import { getInventory, createInventoryItem, deleteInventoryItem } from '../client/src/services/api';
 
 const Inventory: React.FC = () => {
   const { openModal, closeModal } = useAppContext();
@@ -24,9 +15,12 @@ const Inventory: React.FC = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchInventory = () => {
+    getInventory().then(setInventory).catch(console.error);
+  };
+
   useEffect(() => {
-    // getInventory().then(setInventory).catch(console.error);
-    setInventory(MOCK_INVENTORY); // Placeholder
+    fetchInventory();
   }, []);
 
   const filteredInventory = inventory.filter(item =>
@@ -35,14 +29,27 @@ const Inventory: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleAddItem = (itemData: Omit<InventoryItem, 'id'>) => {
-    const newItem: InventoryItem = {
-      ...itemData,
-      id: `inv-${Date.now()}`,
-    };
-    setInventory(prev => [newItem, ...prev]);
-    closeModal();
+  const handleAddItem = async (itemData: Omit<InventoryItem, 'id'>) => {
+    try {
+        await createInventoryItem(itemData);
+        closeModal();
+        fetchInventory();
+    } catch (error) {
+        console.error("Failed to add inventory item", error);
+        alert("Failed to add item.");
+    }
   };
+
+  const handleDeleteItem = async (id: string) => {
+      if(window.confirm("Are you sure you want to delete this item?")) {
+          try {
+              await deleteInventoryItem(id);
+              fetchInventory();
+          } catch (error) {
+              console.error("Failed to delete item", error);
+          }
+      }
+  }
 
   const handleAddItemClick = () => {
     openModal(
@@ -85,7 +92,13 @@ const Inventory: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredInventory.map((item) => {
+            {filteredInventory.length === 0 ? (
+                <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                        No inventory items found.
+                    </td>
+                </tr>
+            ) : filteredInventory.map((item) => {
               const maxStock = item.lowStockThreshold * 3;
               const stockPercentage = Math.min((item.quantity / maxStock) * 100, 100);
 
@@ -107,7 +120,7 @@ const Inventory: React.FC = () => {
                 </td>
                 <td className="p-4 space-x-2">
                     <Button variant="secondary" size="sm">{t('common.edit')}</Button>
-                    <Button variant="danger" size="sm">{t('common.delete')}</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteItem(item.id)}>{t('common.delete')}</Button>
                 </td>
               </tr>
             )})}

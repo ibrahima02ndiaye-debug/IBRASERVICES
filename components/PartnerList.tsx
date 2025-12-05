@@ -1,21 +1,13 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIX: Removed import from obsolete constants.ts.
 import { Partner } from '../types';
 import { useAppContext } from '../contexts/AppContext';
 import Card from './common/Card';
 import Button from './common/Button';
 import { PlusIcon, SearchIcon } from './icons/Icons';
 import AddPartnerForm from './forms/AddPartnerForm';
-// import { getPartners } from '../services/api';
-
-// MOCK DATA until API is connected
-const MOCK_PARTNERS: Partner[] = [
-    { id: 'part-1', name: 'Auto Parts Pro', type: 'Parts Supplier', contactPerson: 'Mike', email: 'mike@app.com', phone: '555-0201' },
-    { id: 'part-2', name: 'Secure Insurance', type: 'Insurance', contactPerson: 'Sarah', email: 'sarah@secure.com', phone: '555-0202' },
-];
+import { getPartners, createPartner, deletePartner } from '../client/src/services/api';
 
 const PartnerList: React.FC = () => {
   const { openModal, closeModal } = useAppContext();
@@ -23,9 +15,12 @@ const PartnerList: React.FC = () => {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchPartners = () => {
+    getPartners().then(setPartners).catch(console.error);
+  };
+
   useEffect(() => {
-    // getPartners().then(setPartners).catch(console.error);
-    setPartners(MOCK_PARTNERS); // Placeholder
+    fetchPartners();
   }, []);
 
   const filteredPartners = partners.filter(partner =>
@@ -34,14 +29,27 @@ const PartnerList: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleAddNewPartner = (partnerData: Omit<Partner, 'id'>) => {
-    const newPartner: Partner = {
-        ...partnerData,
-        id: `part-${Date.now()}`,
-    };
-    setPartners(prev => [newPartner, ...prev]);
-    closeModal();
+  const handleAddNewPartner = async (partnerData: Omit<Partner, 'id'>) => {
+    try {
+        await createPartner(partnerData);
+        closeModal();
+        fetchPartners();
+    } catch (error) {
+        console.error("Failed to add partner", error);
+        alert("Failed to add partner.");
+    }
   };
+
+  const handleDeletePartner = async (id: string) => {
+      if(window.confirm("Are you sure you want to delete this partner?")) {
+          try {
+              await deletePartner(id);
+              fetchPartners();
+          } catch (error) {
+              console.error("Failed to delete partner", error);
+          }
+      }
+  }
 
   const handleAddPartnerClick = () => {
     openModal(
@@ -79,7 +87,13 @@ const PartnerList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredPartners.map((partner) => (
+            {filteredPartners.length === 0 ? (
+                <tr>
+                    <td colSpan={6} className="p-8 text-center text-gray-500">
+                        No partners found.
+                    </td>
+                </tr>
+            ) : filteredPartners.map((partner) => (
               <tr key={partner.id} className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                 <td className="p-4 font-medium text-gray-950 dark:text-white">{partner.name}</td>
                 <td className="p-4 text-sm">{partner.type}</td>
@@ -88,7 +102,7 @@ const PartnerList: React.FC = () => {
                 <td className="p-4 text-sm">{partner.phone}</td>
                 <td className="p-4 space-x-2">
                     <Button variant="secondary" size="sm">{t('common.edit')}</Button>
-                    <Button variant="danger" size="sm">{t('common.delete')}</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDeletePartner(partner.id)}>{t('common.delete')}</Button>
                 </td>
               </tr>
             ))}

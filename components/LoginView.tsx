@@ -12,15 +12,13 @@ const LoginView: React.FC = () => {
     const { t } = useTranslation();
     const { login } = useAppContext();
     
-    // State to toggle between Login and Register
     const [isLoginMode, setIsLoginMode] = useState(true);
     
-    // Form fields
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState('Garage'); // Default to Garage
+    const [role, setRole] = useState('Garage');
     
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +28,6 @@ const LoginView: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        // Validation for Registration
         if (!isLoginMode && password !== confirmPassword) {
             setError(t('login.error_mismatch'));
             setIsLoading(false);
@@ -41,24 +38,11 @@ const LoginView: React.FC = () => {
             let data;
             
             if (isLoginMode) {
-                // Perform Login
                 data = await loginUser({ email, password });
             } else {
-                // Perform Registration
-                // Try registering with API
-                try {
-                    data = await registerUser({ name, email, password, role });
-                } catch (regError: any) {
-                    // Fallback for demo if backend endpoint 501s or fails
-                    console.warn("Registration API failed, simulating success for demo.");
-                    data = {
-                        token: 'demo-token-' + Date.now(),
-                        user: { id: 'new-user', email, role }
-                    };
-                }
+                data = await registerUser({ name, email, password, role });
             }
             
-            // Assuming API returns { token: '...', user: { role: '...' } }
             if (data.token) {
                 login(data.token, data.user || { role: role });
             } else {
@@ -67,17 +51,11 @@ const LoginView: React.FC = () => {
         } catch (err: any) {
             console.error('Auth failed', err);
             
-            // Handle Login Failures
             if (isLoginMode) {
                  if (err.message === 'Invalid credentials.' || err.message === 'Unauthorized') {
                     setError(t('login.error_credentials') || 'Invalid email or password.');
                 } else {
-                    // FALLBACK FOR DEMO IF SERVER OFFLINE
-                    if (email === 'ibrahima02ndiaye@gmail.com' && password === 'admin') {
-                         login('dummy-token', { role: 'Garage' });
-                    } else {
-                         setError('Connection failed. Server might be offline.');
-                    }
+                    setError('Connection failed. Please check your network.');
                 }
             } else {
                 setError('Registration failed. Please try again.');
@@ -182,7 +160,6 @@ const LoginView: React.FC = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             autoComplete="email"
-                            placeholder={isLoginMode ? "ibrahima02ndiaye@gmail.com" : ""}
                             className="bg-gray-50 dark:bg-gray-800"
                         />
                         
@@ -195,7 +172,6 @@ const LoginView: React.FC = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 autoComplete={isLoginMode ? "current-password" : "new-password"}
-                                placeholder={isLoginMode ? "•••••" : ""}
                                 className="bg-gray-50 dark:bg-gray-800"
                             />
                             
@@ -230,12 +206,6 @@ const LoginView: React.FC = () => {
                                 </span>
                             ) : (isLoginMode ? t('login.sign_in') : t('login.register'))}
                         </Button>
-                        
-                        {isLoginMode && (
-                            <div className="text-center text-xs text-gray-400">
-                                Demo: ibrahima02ndiaye@gmail.com / admin
-                            </div>
-                        )}
                     </form>
 
                     <div className="relative my-8">

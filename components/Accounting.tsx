@@ -8,24 +8,14 @@ import { useAppContext } from '../contexts/AppContext';
 import AddTransactionForm from './forms/AddTransactionForm';
 import InvoiceCreator from './InvoiceCreator';
 import { generateInvoicePdf } from '../utils/pdfGenerator';
-// import { getFinancials } from '../services/api';
-
-// MOCK DATA
-const MOCK_FINANCIALS: FinancialRecord[] = [
-    { id: 'fin-1', date: '2024-07-20', description: 'Service for Toyota Camry', amount: 350.00, type: 'Income', clientId: 'cli-1', invoiceId: 'INV-1001'},
-    { id: 'fin-2', date: '2024-07-21', description: 'Parts Order from Auto Parts Pro', amount: 820.50, type: 'Expense'},
-];
-const MOCK_CLIENTS: Client[] = [
-    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St, Anytown, USA' },
-    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave, Anytown, USA' },
-];
+import { getFinancials, getClients, createFinancialRecord } from '../client/src/services/api';
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ReactElement; }> = ({ title, value, icon }) => (
     <Card className="p-6 flex items-center space-x-4">
       <div className="bg-gray-100 dark:bg-gray-800 p-3.5 rounded-lg">{icon}</div>
       <div>
         <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">{title}</p>
-        <p className="text-2xl font-bold text-gray-950 dark:text-white">{value}</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
       </div>
     </Card>
 );
@@ -34,12 +24,22 @@ const Accounting: React.FC = () => {
   const { openModal, closeModal } = useAppContext();
   const { t } = useTranslation();
   const [transactions, setTransactions] = useState<FinancialRecord[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'invoicing'>('overview');
 
+  const fetchData = async () => {
+    try {
+        const [trans, clis] = await Promise.all([getFinancials(), getClients()]);
+        setTransactions(trans);
+        setClients(clis);
+    } catch (e) {
+        console.error(e);
+    }
+  };
+
   useEffect(() => {
-    // getFinancials().then(setTransactions).catch(console.error);
-    setTransactions(MOCK_FINANCIALS); 
+    fetchData();
   }, []);
 
   const totalIncome = transactions.filter(f => f.type === 'Income').reduce((sum, item) => sum + item.amount, 0);
@@ -50,16 +50,15 @@ const Accounting: React.FC = () => {
     record.description.toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const handleAddNewTransaction = (transactionData: Omit<FinancialRecord, 'id' | 'invoiceId' | 'clientId'>) => {
-    const newTransaction: FinancialRecord = {
-        ...transactionData,
-        id: `fin-${Date.now()}`,
-    };
-    if (newTransaction.type === 'Income') {
-        newTransaction.invoiceId = `INV-${Math.floor(1000 + Math.random() * 9000)}`;
+  const handleAddNewTransaction = async (transactionData: Omit<FinancialRecord, 'id' | 'invoiceId' | 'clientId'>) => {
+    try {
+        await createFinancialRecord(transactionData);
+        closeModal();
+        fetchData();
+    } catch (error) {
+        console.error("Failed to add transaction", error);
+        alert("Failed to add transaction.");
     }
-    setTransactions(prev => [newTransaction, ...prev]);
-    closeModal();
   };
   
   const handleAddTransactionClick = () => {
@@ -71,13 +70,13 @@ const Accounting: React.FC = () => {
   };
 
   const handleViewInvoice = (record: FinancialRecord) => {
-    const client = MOCK_CLIENTS.find(c => c.id === record.clientId);
+    const client = clients.find(c => c.id === record.clientId);
     generateInvoicePdf(record, client, t);
   };
 
   if (activeTab === 'invoicing') {
     return (
-        <InvoiceCreator clients={MOCK_CLIENTS} onCancel={() => setActiveTab('overview')} />
+        <InvoiceCreator clients={clients} onCancel={() => setActiveTab('overview')} />
     );
   }
 
@@ -134,7 +133,13 @@ const Accounting: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredTransactions.map((record) => (
+              {filteredTransactions.length === 0 ? (
+                <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                        No transactions found.
+                    </td>
+                </tr>
+              ) : filteredTransactions.map((record) => (
                 <tr key={record.id} className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                   <td className="p-4 text-gray-600 dark:text-gray-400 text-sm">{new Date(record.date).toLocaleDateString()}</td>
                   <td className="p-4 font-medium text-gray-950 dark:text-white text-sm">{record.description}</td>

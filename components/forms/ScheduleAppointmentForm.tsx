@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Appointment, Client, Vehicle, Staff } from '../../types';
@@ -7,21 +6,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import Input from '../common/Input';
 import Select from '../common/Select';
 import Button from '../common/Button';
-// FIX: Removed imports from obsolete constants.ts.
-// import { getClients, getVehicles, getStaff } from '../../services/api';
-
-// MOCK DATA until API is connected
-const MOCK_CLIENTS: Client[] = [
-    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St' },
-    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave' },
-];
-const MOCK_VEHICLES: Vehicle[] = [
-    { id: 'veh-1', make: 'Toyota', model: 'Camry', year: 2021, vin: '12345ABC', licensePlate: 'XYZ 123', mileage: 45000, ownerId: 'cli-1', status: 'Available' },
-    { id: 'veh-2', make: 'Honda', model: 'Civic', year: 2020, vin: '67890DEF', licensePlate: 'ABC 456', mileage: 60000, ownerId: 'cli-2', status: 'In Service' },
-];
-const MOCK_STAFF: Staff[] = [
-    { id: 'staff-2', name: 'Bob', role: 'Mechanic', email: 'bob@garage.com', phone: '555-0102' },
-];
+import { getClients, getVehicles, getStaff } from '../../client/src/services/api';
 
 interface ScheduleAppointmentFormProps {
   onSchedule: (appointmentData: Omit<Appointment, 'id'>) => void;
@@ -30,33 +15,46 @@ interface ScheduleAppointmentFormProps {
 const ScheduleAppointmentForm: React.FC<ScheduleAppointmentFormProps> = ({ onSchedule }) => {
   const { closeModal, userRole } = useAppContext();
   const { t } = useTranslation();
-  const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
-  const [vehicles, setVehicles] = useState<Vehicle[]>(MOCK_VEHICLES);
-  const [staff, setStaff] = useState<Staff[]>(MOCK_STAFF);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
 
-  const [clientId, setClientId] = useState(userRole === 'Client' ? 'cli-2' : '');
+  const [clientId, setClientId] = useState('');
   const [vehicleId, setVehicleId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().substring(0, 16));
   const [serviceType, setServiceType] = useState('');
   const [mechanic, setMechanic] = useState('');
   const [notes, setNotes] = useState('');
 
-  // useEffect(() => {
-  //   if (userRole === 'Garage') {
-  //     getClients().then(setClients);
-  //     getStaff().then(setStaff);
-  //   }
-  //   getVehicles().then(setVehicles);
-  // }, [userRole]);
+  useEffect(() => {
+    const loadData = async () => {
+        try {
+            if (userRole === 'Garage') {
+                const [clis, stf] = await Promise.all([getClients(), getStaff()]);
+                setClients(clis);
+                setStaff(stf);
+            }
+            const vehs = await getVehicles();
+            setVehicles(vehs);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+    loadData();
+  }, [userRole]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientId || !vehicleId || !date || !serviceType) {
-      alert('All fields except notes are required.');
+    if (userRole === 'Garage' && !clientId) {
+        alert('Client is required');
+        return;
+    }
+    if (!vehicleId || !date || !serviceType) {
+      alert('Vehicle, date, and service type are required.');
       return;
     }
     onSchedule({
-      clientId,
+      clientId: userRole === 'Client' ? 'self' : clientId,
       vehicleId,
       date,
       serviceType,
@@ -66,7 +64,10 @@ const ScheduleAppointmentForm: React.FC<ScheduleAppointmentFormProps> = ({ onSch
     });
   };
 
-  const clientVehicles = vehicles.filter(v => v.ownerId === clientId);
+  const clientVehicles = userRole === 'Garage' 
+    ? vehicles.filter(v => v.ownerId === clientId)
+    : vehicles; 
+    
   const mechanics = staff.filter(s => s.role === 'Mechanic');
 
   return (
@@ -79,7 +80,7 @@ const ScheduleAppointmentForm: React.FC<ScheduleAppointmentFormProps> = ({ onSch
           ))}
         </Select>
       )}
-      <Select id="vehicleId" label={t('forms.label_vehicle')} value={vehicleId} onChange={e => setVehicleId(e.target.value)} required disabled={!clientId}>
+      <Select id="vehicleId" label={t('forms.label_vehicle')} value={vehicleId} onChange={e => setVehicleId(e.target.value)} required disabled={userRole === 'Garage' && !clientId}>
         <option value="" disabled>{t('forms.placeholder_select_vehicle')}</option>
         {clientVehicles.map(vehicle => (
           <option key={vehicle.id} value={vehicle.id}>{vehicle.year} {vehicle.make} {vehicle.model}</option>

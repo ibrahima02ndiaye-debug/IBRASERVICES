@@ -1,21 +1,13 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-// FIX: Removed import from obsolete constants.ts.
 import { Staff } from '../types';
 import { useAppContext } from '../contexts/AppContext';
 import Card from './common/Card';
 import Button from './common/Button';
 import { PlusIcon, SearchIcon } from './icons/Icons';
 import AddStaffForm from './forms/AddStaffForm';
-// import { getStaff } from '../services/api';
-
-// MOCK DATA until API is connected
-const MOCK_STAFF: Staff[] = [
-    { id: 'staff-1', name: 'Alice', role: 'Manager', email: 'alice@garage.com', phone: '555-0101' },
-    { id: 'staff-2', name: 'Bob', role: 'Mechanic', email: 'bob@garage.com', phone: '555-0102' },
-];
+import { getStaff, createStaff, deleteStaff } from '../client/src/services/api';
 
 const roleColorMap: { [key in Staff['role']]: string } = {
     'Manager': 'bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-500/20',
@@ -30,9 +22,12 @@ const PersonnelManager: React.FC = () => {
   const [staff, setStaff] = useState<Staff[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchStaff = () => {
+    getStaff().then(setStaff).catch(console.error);
+  };
+
   useEffect(() => {
-    // getStaff().then(setStaff).catch(console.error);
-    setStaff(MOCK_STAFF); // Placeholder
+    fetchStaff();
   }, []);
 
   const filteredStaff = staff.filter(s =>
@@ -41,14 +36,27 @@ const PersonnelManager: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
   
-  const handleAddNewStaff = (staffData: Omit<Staff, 'id'>) => {
-    const newStaff: Staff = {
-        ...staffData,
-        id: `staff-${Date.now()}`,
-    };
-    setStaff(prev => [newStaff, ...prev]);
-    closeModal();
+  const handleAddNewStaff = async (staffData: Omit<Staff, 'id'>) => {
+    try {
+        await createStaff(staffData);
+        closeModal();
+        fetchStaff();
+    } catch (error) {
+        console.error("Failed to add staff", error);
+        alert("Failed to add staff member.");
+    }
   };
+
+  const handleDeleteStaff = async (id: string) => {
+      if(window.confirm("Are you sure you want to delete this staff member?")) {
+        try {
+            await deleteStaff(id);
+            fetchStaff();
+        } catch (error) {
+            console.error("Failed to delete staff", error);
+        }
+      }
+  }
 
   const handleAddStaffClick = () => {
     openModal(
@@ -85,7 +93,13 @@ const PersonnelManager: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStaff.map((staff) => (
+            {filteredStaff.length === 0 ? (
+                <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                        No personnel found.
+                    </td>
+                </tr>
+            ) : filteredStaff.map((staff) => (
               <tr key={staff.id} className="border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                 <td className="p-4 font-medium text-gray-950 dark:text-white">{staff.name}</td>
                 <td className="p-4">
@@ -97,7 +111,7 @@ const PersonnelManager: React.FC = () => {
                 <td className="p-4 text-sm">{staff.phone}</td>
                 <td className="p-4 space-x-2">
                     <Button variant="secondary" size="sm">{t('common.edit')}</Button>
-                    <Button variant="danger" size="sm">{t('common.delete')}</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteStaff(staff.id)}>{t('common.delete')}</Button>
                 </td>
               </tr>
             ))}

@@ -6,16 +6,8 @@ import Card from './common/Card';
 import Button from './common/Button';
 import { PlusIcon, SearchIcon } from './icons/Icons';
 import AddVehicleForm from './forms/AddVehicleForm';
-import { getVehicles } from '../client/src/services/api';
+import { getVehicles, createVehicle } from '../client/src/services/api';
 import Skeleton from './common/Skeleton';
-
-// MOCK DATA Fallback
-const MOCK_VEHICLES: Vehicle[] = [
-    { id: 'veh-1', make: 'Toyota', model: 'Camry', year: 2021, vin: '12345ABC', licensePlate: 'XYZ 123', mileage: 45000, ownerId: 'cli-1', status: 'Available' },
-    { id: 'veh-2', make: 'Honda', model: 'Civic', year: 2020, vin: '67890DEF', licensePlate: 'ABC 456', mileage: 60000, ownerId: 'cli-2', status: 'In Service' },
-    { id: 'veh-3', make: 'Ford', model: 'F-150', year: 2019, vin: '45678GHI', licensePlate: 'TRK 789', mileage: 85000, ownerId: 'cli-3', status: 'Available' },
-    { id: 'veh-4', make: 'BMW', model: '330i', year: 2023, vin: '98765JKL', licensePlate: 'LUX 456', mileage: 12000, ownerId: 'cli-4', status: 'Out of Service' },
-];
 
 const statusColorMap: { [key in Vehicle['status']]: string } = {
   'Available': 'bg-green-500/10 text-green-500 dark:text-green-400 border border-green-500/20',
@@ -30,19 +22,20 @@ const VehicleList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        const data = await getVehicles();
+        setVehicles(data);
+    } catch (error) {
+        console.error("Failed to fetch vehicles:", error);
+        setVehicles([]);
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const data = await getVehicles();
-            setVehicles(data);
-        } catch (error) {
-            console.warn("Failed to fetch vehicles (Server might be offline). Using mock data.", error);
-            setVehicles(MOCK_VEHICLES);
-        } finally {
-            setIsLoading(false);
-        }
-    };
     fetchData();
   }, []);
 
@@ -52,13 +45,15 @@ const VehicleList: React.FC = () => {
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleAddNewVehicle = (vehicleData: Omit<Vehicle, 'id'>) => {
-    const newVehicle: Vehicle = {
-      ...vehicleData,
-      id: `veh-${Date.now()}`
-    };
-    setVehicles(prev => [newVehicle, ...prev]);
-    closeModal();
+  const handleAddNewVehicle = async (vehicleData: Omit<Vehicle, 'id'>) => {
+    try {
+        await createVehicle(vehicleData);
+        closeModal();
+        fetchData();
+    } catch (error) {
+        console.error("Failed to create vehicle", error);
+        alert("Failed to create vehicle. Please try again.");
+    }
   };
 
   const handleAddVehicleClick = () => {
@@ -111,7 +106,7 @@ const VehicleList: React.FC = () => {
             ) : filteredVehicles.length === 0 ? (
                 <tr>
                     <td colSpan={6} className="p-8 text-center text-gray-500">
-                        No vehicles found.
+                        {t('vehicles.search_placeholder').replace('...', '')} not found.
                     </td>
                 </tr>
             ) : (

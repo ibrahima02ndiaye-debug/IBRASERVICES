@@ -1,22 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../contexts/AppContext';
 import Card from './common/Card';
 import Button from './common/Button';
 import { ArrowLeftIcon } from './icons/Icons';
-
-// MOCK DATA until API is connected
-const MOCK_CLIENTS = [
-    { id: 'cli-1', name: 'John Doe', email: 'john.doe@example.com', phone: '555-1234', address: '123 Main St, Anytown, USA' },
-    { id: 'cli-2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '555-5678', address: '456 Oak Ave, Anytown, USA' },
-];
+import { Client } from '../types';
+import { getClientById } from '../client/src/services/api';
+import Skeleton from './common/Skeleton';
 
 const ClientDetail: React.FC = () => {
   const { selectedClientId, setCurrentView } = useAppContext();
   const { t } = useTranslation();
+  const [client, setClient] = useState<Client | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // In a real app, you'd fetch this data from an API
-  const client = MOCK_CLIENTS.find(c => c.id === selectedClientId);
+  useEffect(() => {
+    if (selectedClientId) {
+      setIsLoading(true);
+      getClientById(selectedClientId)
+        .then(setClient)
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    }
+  }, [selectedClientId]);
+
+  if (isLoading) {
+    return (
+        <Card className="p-6">
+            <Skeleton className="h-8 w-1/3 mb-4" />
+            <Skeleton className="h-4 w-1/2 mb-2" />
+            <Skeleton className="h-4 w-1/4" />
+        </Card>
+    );
+  }
 
   if (!client) {
     return (
@@ -49,7 +65,7 @@ const ClientDetail: React.FC = () => {
           </div>
         </div>
       </Card>
-      {/* TODO: Add sections for client's vehicles, appointments, etc. */}
+      {/* Future sections: Vehicles, History, etc. can be added here fetching associated data */}
     </div>
   );
 };

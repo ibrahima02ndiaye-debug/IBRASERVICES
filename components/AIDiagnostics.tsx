@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Card from './common/Card';
@@ -112,16 +111,9 @@ const AIDiagnostics: React.FC = () => {
   };
 
   const parseDtcResponse = (data: string) => {
-    // Example response for '03' command: 43 01 33 00 00 00 00
-    // 43 is the response for mode 03. The rest are pairs of bytes for each code.
-    // NOTE: replacing \s removes newlines too, so split('\r\n') might behave unexpectedly if data relies on newlines.
-    // Assuming data comes in a chunk that might have had newlines removed or we process raw.
-    // For safety, we should just look for the 43... pattern in the cleaned string.
     const cleanData = data.replace(/\s/g, '').replace('>', '');
-    // If newlines were removed, split won't work as expected if there were multiple lines.
-    // But typically 03 response is single line or continuous stream.
-    // We will treat cleanData as a potential single line response.
-    const lines = cleanData.match(/43[0-9A-Fa-f]+/g);
+    // Explicitly fallback to an empty string array if match returns null
+    const lines = cleanData.match(/43[0-9A-Fa-f]+/g) || ([] as string[]);
     
     if (!lines || lines.length === 0) {
       setDtcs([]);
@@ -137,7 +129,7 @@ const AIDiagnostics: React.FC = () => {
       return;
     }
     
-    const hexCodes = (firstLine.substring(2).match(/.{1,4}/g) as string[]) || ([] as string[]);
+    const hexCodes = firstLine.substring(2).match(/.{1,4}/g) || ([] as string[]);
     const parsedCodes: string[] = [];
     
     const codePrefixes = ['P', 'C', 'B', 'U'];
