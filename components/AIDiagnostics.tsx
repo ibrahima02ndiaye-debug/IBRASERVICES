@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Card from './common/Card';
@@ -136,7 +137,7 @@ const AIDiagnostics: React.FC = () => {
       return;
     }
     
-    const hexCodes = firstLine.substring(2).match(/.{1,4}/g) || [];
+    const hexCodes = (firstLine.substring(2).match(/.{1,4}/g) as string[]) || ([] as string[]);
     const parsedCodes: string[] = [];
     
     const codePrefixes = ['P', 'C', 'B', 'U'];

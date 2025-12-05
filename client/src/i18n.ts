@@ -1,21 +1,633 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpApi from 'i18next-http-backend';
+
+// English translations
+const en = {
+  nav: {
+    dashboard: "Dashboard",
+    vehicles: "Vehicles",
+    clients: "Clients",
+    client_detail: "Client Details",
+    appointments: "Appointments",
+    personnel: "Personnel",
+    accounting: "Accounting",
+    partners: "Partners",
+    messages: "Messaging",
+    diagnostics: "AI Diagnostics",
+    inventory: "Inventory"
+  },
+  header: {
+    view: "View",
+    toggle_theme: "Toggle theme"
+  },
+  roles: {
+    Garage: "Admin",
+    Client: "Client"
+  },
+  common: {
+    edit: "Edit",
+    delete: "Delete",
+    save: "Save",
+    cancel: "Cancel",
+    name: "Name",
+    email: "Email",
+    phone: "Phone",
+    address: "Address",
+    actions: "Actions",
+    status: "Status"
+  },
+  modal: {
+    close: "Close modal"
+  },
+  dashboard: {
+    financial_overview: "Financial Overview",
+    income: "Income",
+    expense: "Expense",
+    total_revenue: "Total Revenue",
+    total_clients: "Total Clients",
+    vehicles_in_service: "Active Vehicles",
+    upcoming_appointments: "Upcoming Services",
+    my_vehicles: "My Vehicles",
+    my_appointments: "My Appointments",
+    pending_quotes: "Pending Quotes",
+    my_upcoming_appointments: "My Upcoming Services",
+    recent_upcoming_appointments: "Agenda"
+  },
+  quotes: {
+    title: "Quotes for Approval",
+    reject: "Reject",
+    approve: "Approve",
+    none: "You have no pending quotes to review."
+  },
+  lists: {
+    edit: "Edit",
+    delete: "Delete"
+  },
+  statuses: {
+    Available: "Available",
+    "In Service": "In Service",
+    "Out of Service": "Out of Service",
+    Scheduled: "Scheduled",
+    "In Progress": "In Progress",
+    Completed: "Completed",
+    Cancelled: "Cancelled",
+    Manager: "Manager",
+    Mechanic: "Mechanic",
+    Receptionist: "Receptionist",
+    Detailer: "Detailer"
+  },
+  vehicles: {
+    search_placeholder: "Search vehicles...",
+    add_new: "Add New Vehicle",
+    add_button: "Add Vehicle",
+    header_vehicle: "Vehicle",
+    header_vin: "VIN",
+    header_license_plate: "License Plate",
+    header_mileage: "Mileage",
+    header_status: "Status",
+    header_actions: "Actions"
+  },
+  clients: {
+    search_placeholder: "Search clients...",
+    add_new: "Add New Client",
+    add_button: "Add Client",
+    header_name: "Name",
+    header_contact: "Contact",
+    header_address: "Address",
+    not_found: "Client Not Found",
+    not_found_description: "Please select a client from the list.",
+    back_to_list: "Back to Client List"
+  },
+  appointments: {
+    schedule: "Schedule Service",
+    header_date: "Date & Time",
+    header_client: "Client",
+    header_vehicle: "Vehicle",
+    header_service: "Service",
+    header_mechanic: "Staff",
+    header_status: "Status",
+    header_actions: "Actions"
+  },
+  personnel: {
+    add_new: "Add New Staff Member",
+    search_placeholder: "Search personnel...",
+    add_button: "Add Staff",
+    header_name: "Name",
+    header_role: "Role",
+    header_email: "Email",
+    header_phone: "Phone",
+    header_actions: "Actions"
+  },
+  partners: {
+    add_new: "Add New Partner",
+    search_placeholder: "Search partners...",
+    add_button: "Add Partner",
+    header_name: "Name",
+    header_type: "Type",
+    header_contact_person: "Contact Person",
+    header_email: "Email",
+    header_phone: "Phone",
+    header_actions: "Actions"
+  },
+  accounting: {
+    total_income: "Total Income",
+    total_expense: "Total Expense",
+    net_profit: "Net Profit",
+    add_new: "Add New Transaction",
+    search_placeholder: "Search transactions...",
+    add_button: "Add Transaction",
+    create_invoice: "Create Invoice",
+    tab_overview: "Overview",
+    tab_invoicing: "Invoicing",
+    header_date: "Date",
+    header_description: "Description",
+    header_type: "Type",
+    header_amount: "Amount",
+    header_invoice: "Invoice",
+    view_pdf: "View PDF"
+  },
+  billing: {
+    create_new_invoice: "Create New Invoice",
+    template: "Template",
+    template_modern: "Modern",
+    template_classic: "Classic",
+    template_minimal: "Minimal",
+    items: "Line Items",
+    add_item: "Add Item",
+    item_desc: "Description",
+    due_date: "Due Date",
+    generate_pdf: "Generate PDF",
+    error_select_client: "Please select a client."
+  },
+  inventory: {
+    add_new: "Add New Item",
+    search_placeholder: "Search inventory...",
+    add_button: "Add Item",
+    header_item_name: "Item Name",
+    header_sku: "SKU",
+    header_supplier: "Supplier",
+    header_quantity: "Quantity",
+    header_actions: "Actions"
+  },
+  diagnostics: {
+    title: "AI Diagnostics",
+    describe_symptoms: "Describe Symptoms",
+    symptoms_placeholder: "e.g., 'Car hesitates'...",
+    diagnosing: "Diagnosing...",
+    run: "Run Diagnostics",
+    result_title: "Result:",
+    error: "An error occurred.",
+    obd_connect: "Connect OBD-II",
+    obd_disconnect: "Disconnect",
+    obd_read_codes: "Read DTCs",
+    obd_connecting: "Connecting...",
+    obd_reading_codes: "Reading codes...",
+    obd_connected_to: "Connected to:",
+    obd_not_connected: "Not Connected",
+    obd_no_codes_found: "No DTCs found.",
+    obd_codes_found: "DTCs found:",
+    obd_error_unsupported: "Bluetooth not supported.",
+    obd_error_connection: "Connection failed."
+  },
+  chat: {
+    greeting: "Hello! How can I help?",
+    error: "Error.",
+    open: "Open Chat",
+    close: "Close Chat",
+    title: "AI Assistant",
+    placeholder: "Ask anything..."
+  },
+  messages: {
+    title: "Messaging",
+    under_construction: "Coming soon."
+  },
+  forms: {
+    add_client_title: "Add New Client",
+    label_full_name: "Full Name",
+    label_email: "Email Address",
+    label_phone: "Phone Number",
+    label_address: "Address",
+    button_add_client: "Add Client",
+    add_vehicle_title: "Add New Vehicle",
+    label_owner: "Owner",
+    placeholder_select_client: "Select a client",
+    label_make: "Make",
+    label_model: "Model",
+    label_year: "Year",
+    label_vin: "VIN",
+    label_license_plate: "License Plate",
+    label_mileage: "Mileage",
+    label_status: "Status",
+    status_available: "Available",
+    status_in_service: "In Service",
+    status_out_of_service: "Out of Service",
+    button_add_vehicle: "Add Vehicle",
+    button_lookup: "Auto-Fill",
+    tooltip_vin_lookup: "Lookup via Database",
+    error_invalid_vin: "Invalid VIN.",
+    add_staff_title: "Add New Staff Member",
+    label_role: "Role",
+    role_mechanic: "Mechanic",
+    role_manager: "Manager",
+    role_receptionist: "Receptionist",
+    role_detailer: "Detailer",
+    button_add_staff: "Add Staff",
+    add_partner_title: "Add New Partner",
+    label_partner_name: "Partner Name",
+    label_type: "Type",
+    type_parts_supplier: "Parts Supplier",
+    type_insurance: "Insurance",
+    type_towing: "Towing Service",
+    type_detailing: "Subcontractor",
+    label_contact_person: "Contact Person",
+    button_add_partner: "Add Partner",
+    add_transaction_title: "Add New Transaction",
+    label_description: "Description",
+    type_income: "Income",
+    type_expense: "Expense",
+    label_amount: "Amount",
+    label_date: "Date",
+    button_add_transaction: "Add Transaction",
+    add_inventory_title: "Add New Inventory Item",
+    label_item_name: "Item Name",
+    label_sku: "SKU",
+    label_initial_quantity: "Initial Quantity",
+    label_low_stock_threshold: "Low Stock Threshold",
+    label_supplier: "Supplier",
+    placeholder_select_supplier: "Select a supplier",
+    button_add_item: "Add Item",
+    schedule_appointment: "Schedule Service",
+    label_client: "Client",
+    label_vehicle: "Vehicle",
+    placeholder_select_vehicle: "Select a vehicle",
+    label_service_type: "Service Type",
+    placeholder_service_type: "e.g., Oil Change",
+    label_datetime: "Date & Time",
+    label_assign_mechanic: "Assign Staff",
+    placeholder_assign_later: "Assign later",
+    label_notes: "Notes",
+    button_schedule: "Schedule",
+    label_password: "Password",
+    label_confirm_password: "Confirm Password",
+    label_user_type: "I am a..."
+  },
+  pdf: {
+    invoice: {
+      title: "INVOICE",
+      number: "Invoice #",
+      date: "Date",
+      bill_to: "Bill To:",
+      description: "DESCRIPTION",
+      amount: "AMOUNT",
+      total: "Total:",
+      thank_you: "Thank you!",
+      footer: "Garage Pilot"
+    }
+  },
+  login: {
+    welcome: "Welcome Back",
+    welcome_register: "Join Us",
+    sign_in_prompt: "Sign in to manage your services.",
+    register_prompt: "Create an account.",
+    sign_in: "Sign In",
+    register: "Create Account",
+    signing_in: "Signing In...",
+    registering: "Creating...",
+    no_account: "No account?",
+    have_account: "Have an account?",
+    create_account: "Sign Up",
+    login_link: "Log In",
+    error_credentials: "Invalid credentials.",
+    error_mismatch: "Passwords do not match."
+  },
+  vin_scanner: {
+    title: "Scan Barcode",
+    camera_placeholder: "Camera Feed",
+    instructions: "Align the barcode.",
+    simulate_scan: "Simulate Scan"
+  }
+};
+
+const fr = {
+  nav: {
+    dashboard: "Tableau de bord",
+    vehicles: "Véhicules",
+    clients: "Clients",
+    client_detail: "Détails client",
+    appointments: "Rendez-vous",
+    personnel: "Personnel",
+    accounting: "Comptabilité",
+    partners: "Partenaires",
+    messages: "Messagerie",
+    diagnostics: "Diagnostic IA",
+    inventory: "Inventaire"
+  },
+  header: {
+    view: "Vue",
+    toggle_theme: "Thème"
+  },
+  roles: {
+    Garage: "Administration",
+    Client: "Espace Client"
+  },
+  common: {
+    edit: "Modifier",
+    delete: "Supprimer",
+    save: "Enregistrer",
+    cancel: "Annuler",
+    name: "Nom",
+    email: "E-mail",
+    phone: "Téléphone",
+    address: "Adresse",
+    actions: "Actions",
+    status: "Statut"
+  },
+  modal: {
+    close: "Fermer"
+  },
+  dashboard: {
+    financial_overview: "Aperçu financier",
+    income: "Revenus",
+    expense: "Dépenses",
+    total_revenue: "Chiffre d'affaires",
+    total_clients: "Clients actifs",
+    vehicles_in_service: "Véhicules en service",
+    upcoming_appointments: "Prochains rendez-vous",
+    my_vehicles: "Mes véhicules",
+    my_appointments: "Mes rendez-vous",
+    pending_quotes: "Devis en attente",
+    my_upcoming_appointments: "Mes services à venir",
+    recent_upcoming_appointments: "Agenda de l'atelier"
+  },
+  quotes: {
+    title: "Devis à valider",
+    reject: "Refuser",
+    approve: "Valider",
+    none: "Aucun devis en attente."
+  },
+  lists: {
+    edit: "Modifier",
+    delete: "Supprimer"
+  },
+  statuses: {
+    Available: "Disponible",
+    "In Service": "En service",
+    "Out of Service": "Hors service",
+    Scheduled: "Prévu",
+    "In Progress": "En cours",
+    Completed: "Terminé",
+    Cancelled: "Annulé",
+    Manager: "Gérant",
+    Mechanic: "Mécanicien",
+    Receptionist: "Réception",
+    Detailer: "Préparateur"
+  },
+  vehicles: {
+    search_placeholder: "Rechercher...",
+    add_new: "Nouveau véhicule",
+    add_button: "Ajouter",
+    header_vehicle: "Véhicule",
+    header_vin: "VIN",
+    header_license_plate: "Plaque",
+    header_mileage: "Kilométrage",
+    header_status: "Statut",
+    header_actions: "Actions"
+  },
+  clients: {
+    search_placeholder: "Rechercher...",
+    add_new: "Nouveau client",
+    add_button: "Ajouter",
+    header_name: "Nom",
+    header_contact: "Contact",
+    header_address: "Adresse",
+    not_found: "Client introuvable",
+    not_found_description: "Veuillez sélectionner un client.",
+    back_to_list: "Retour liste"
+  },
+  appointments: {
+    schedule: "Prendre rendez-vous",
+    header_date: "Date & Heure",
+    header_client: "Client",
+    header_vehicle: "Véhicule",
+    header_service: "Service",
+    header_mechanic: "Intervenant",
+    header_status: "Statut",
+    header_actions: "Actions"
+  },
+  personnel: {
+    add_new: "Nouveau membre",
+    search_placeholder: "Rechercher...",
+    add_button: "Ajouter",
+    header_name: "Nom",
+    header_role: "Rôle",
+    header_email: "E-mail",
+    header_phone: "Téléphone",
+    header_actions: "Actions"
+  },
+  partners: {
+    add_new: "Nouveau partenaire",
+    search_placeholder: "Rechercher...",
+    add_button: "Ajouter",
+    header_name: "Nom",
+    header_type: "Type",
+    header_contact_person: "Contact",
+    header_email: "E-mail",
+    header_phone: "Téléphone",
+    header_actions: "Actions"
+  },
+  accounting: {
+    total_income: "Revenus",
+    total_expense: "Dépenses",
+    net_profit: "Bénéfice net",
+    add_new: "Nouvelle transaction",
+    search_placeholder: "Rechercher...",
+    add_button: "Ajouter",
+    create_invoice: "Facturer",
+    tab_overview: "Vue d'ensemble",
+    tab_invoicing: "Facturation",
+    header_date: "Date",
+    header_description: "Libellé",
+    header_type: "Type",
+    header_amount: "Montant",
+    header_invoice: "Facture",
+    view_pdf: "Voir PDF"
+  },
+  billing: {
+    create_new_invoice: "Nouvelle facture",
+    template: "Modèle",
+    template_modern: "Moderne",
+    template_classic: "Classique",
+    template_minimal: "Minimaliste",
+    items: "Détails",
+    add_item: "Ajouter ligne",
+    item_desc: "Description",
+    due_date: "Échéance",
+    generate_pdf: "Générer PDF",
+    error_select_client: "Choisir un client."
+  },
+  inventory: {
+    add_new: "Nouvel article",
+    search_placeholder: "Rechercher...",
+    add_button: "Ajouter",
+    header_item_name: "Article",
+    header_sku: "Réf",
+    header_supplier: "Fournisseur",
+    header_quantity: "Stock",
+    header_actions: "Actions"
+  },
+  diagnostics: {
+    title: "Diagnostic IA",
+    describe_symptoms: "Symptômes",
+    symptoms_placeholder: "Ex: 'Bruit au freinage'...",
+    diagnosing: "Analyse...",
+    run: "Lancer diagnostic",
+    result_title: "Résultat :",
+    error: "Erreur technique.",
+    obd_connect: "Connecter OBD",
+    obd_disconnect: "Déconnecter",
+    obd_read_codes: "Lire codes",
+    obd_connecting: "Connexion...",
+    obd_reading_codes: "Lecture...",
+    obd_connected_to: "Connecté à :",
+    obd_not_connected: "Non connecté",
+    obd_no_codes_found: "Aucun code.",
+    obd_codes_found: "Codes détectés :",
+    obd_error_unsupported: "Bluetooth non supporté.",
+    obd_error_connection: "Échec connexion."
+  },
+  chat: {
+    greeting: "Bonjour ! Comment puis-je vous aider ?",
+    error: "Erreur.",
+    open: "Ouvrir",
+    close: "Fermer",
+    title: "Assistant IA",
+    placeholder: "Posez votre question..."
+  },
+  messages: {
+    title: "Messagerie",
+    under_construction: "Bientôt disponible."
+  },
+  forms: {
+    add_client_title: "Ajouter client",
+    label_full_name: "Nom complet",
+    label_email: "E-mail",
+    label_phone: "Téléphone",
+    label_address: "Adresse",
+    button_add_client: "Ajouter",
+    add_vehicle_title: "Ajouter véhicule",
+    label_owner: "Propriétaire",
+    placeholder_select_client: "Choisir client",
+    label_make: "Marque",
+    label_model: "Modèle",
+    label_year: "Année",
+    label_vin: "VIN",
+    label_license_plate: "Plaque",
+    label_mileage: "Kilométrage",
+    label_status: "Statut",
+    status_available: "Disponible",
+    status_in_service: "En atelier",
+    status_out_of_service: "Hors service",
+    button_add_vehicle: "Ajouter",
+    button_lookup: "Recherche auto",
+    tooltip_vin_lookup: "Recherche via base de données",
+    error_invalid_vin: "VIN invalide.",
+    add_staff_title: "Ajouter employé",
+    label_role: "Poste",
+    role_mechanic: "Mécanicien",
+    role_manager: "Gérant",
+    role_receptionist: "Réception",
+    role_detailer: "Préparateur",
+    button_add_staff: "Ajouter",
+    add_partner_title: "Ajouter partenaire",
+    label_partner_name: "Nom",
+    label_type: "Type",
+    type_parts_supplier: "Pièces auto",
+    type_insurance: "Assurance",
+    type_towing: "Remorquage",
+    type_detailing: "Sous-traitant",
+    label_contact_person: "Contact",
+    button_add_partner: "Ajouter",
+    add_transaction_title: "Ajouter transaction",
+    label_description: "Description",
+    type_income: "Recette",
+    type_expense: "Dépense",
+    label_amount: "Montant",
+    label_date: "Date",
+    button_add_transaction: "Ajouter",
+    add_inventory_title: "Ajouter article",
+    label_item_name: "Nom",
+    label_sku: "Réf/SKU",
+    label_initial_quantity: "Quantité",
+    label_low_stock_threshold: "Seuil alerte",
+    label_supplier: "Fournisseur",
+    placeholder_select_supplier: "Choisir fournisseur",
+    button_add_item: "Ajouter",
+    schedule_appointment: "Nouveau rendez-vous",
+    label_client: "Client",
+    label_vehicle: "Véhicule",
+    placeholder_select_vehicle: "Choisir véhicule",
+    label_service_type: "Type de service",
+    placeholder_service_type: "Ex: Vidange",
+    label_datetime: "Date & Heure",
+    label_assign_mechanic: "Attribuer à",
+    placeholder_assign_later: "Plus tard",
+    label_notes: "Notes",
+    button_schedule: "Planifier",
+    label_password: "Mot de passe",
+    label_confirm_password: "Confirmer mot de passe",
+    label_user_type: "Je suis..."
+  },
+  pdf: {
+    invoice: {
+      title: "FACTURE",
+      number: "Facture N°",
+      date: "Date",
+      bill_to: "Facturé à :",
+      description: "DESCRIPTION",
+      amount: "MONTANT",
+      total: "Total :",
+      thank_you: "Merci de votre confiance !",
+      footer: "Garage Pilot"
+    }
+  },
+  login: {
+    welcome: "Bienvenue",
+    welcome_register: "Inscription",
+    sign_in_prompt: "Connectez-vous pour continuer.",
+    register_prompt: "Créez votre compte.",
+    sign_in: "Connexion",
+    register: "Créer un compte",
+    signing_in: "Connexion...",
+    registering: "Création...",
+    no_account: "Pas de compte ?",
+    have_account: "Déjà membre ?",
+    create_account: "S'inscrire",
+    login_link: "Se connecter",
+    error_credentials: "Identifiants invalides.",
+    error_mismatch: "Mots de passe différents."
+  },
+  vin_scanner: {
+    title: "Scanner",
+    camera_placeholder: "Caméra",
+    instructions: "Alignez le code-barres.",
+    simulate_scan: "Simuler"
+  }
+};
 
 i18n
-  .use(HttpApi)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    supportedLngs: ['en', 'fr'],
+    resources: {
+      en: { translation: en },
+      fr: { translation: fr }
+    },
     fallbackLng: 'en',
     debug: false,
     interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
-    },
-    backend: {
-      loadPath: '/locales/{{lng}}/translation.json',
+      escapeValue: false,
     },
   });
 

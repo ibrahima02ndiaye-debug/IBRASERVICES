@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="google" content="notranslate" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IBRA Services</title>
@@ -19,21 +20,21 @@
             },
             colors: {
               gray: {
-                50: '#f8fafc',
-                100: '#f1f5f9',
-                200: '#e2e8f0',
-                300: '#cbd5e1',
-                400: '#94a3b8',
-                500: '#64748b',
-                600: '#475569',
-                700: '#334155',
-                800: '#1e293b',
-                900: '#0f172a',
-                950: '#020617',
+                50: '#f9fafb',
+                100: '#f3f4f6',
+                200: '#e5e7eb',
+                300: '#d1d5db',
+                400: '#9ca3af',
+                500: '#6b7280',
+                600: '#4b5563',
+                700: '#374151',
+                800: '#1f2937',
+                900: '#111827',
+                950: '#030712',
               },
               blue: {
                 ...tailwind.colors.blue,
-                600: '#2563eb', // A slightly brighter blue
+                600: '#2563eb',
               }
             }
           }
@@ -50,19 +51,26 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background-color: #94a3b8;
-        border-radius: 10px;
-        border: 2px solid #f1f5f9;
+        background-color: #cbd5e1;
+        border-radius: 4px;
       }
       .dark ::-webkit-scrollbar-thumb {
-        background-color: #475569;
-        border-color: #0f172a;
+        background-color: #374151;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background-color: #64748b;
+        background-color: #94a3b8;
       }
       .dark ::-webkit-scrollbar-thumb:hover {
-        background-color: #334155;
+        background-color: #4b5563;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -89,7 +97,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-100 dark:bg-gray-950 font-sans antialiased selection:bg-blue-500 selection:text-white">
+  <body class="bg-gray-100 dark:bg-gray-950 font-sans antialiased text-gray-900 dark:text-gray-100 selection:bg-blue-500 selection:text-white" translate="no">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
