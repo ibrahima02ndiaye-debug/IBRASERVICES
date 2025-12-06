@@ -165,6 +165,7 @@ export interface Invoice {
   status: 'Draft' | 'Sent' | 'Paid';
 }
 
+// Command Palette
 export interface Command {
   id: string;
   label: string;

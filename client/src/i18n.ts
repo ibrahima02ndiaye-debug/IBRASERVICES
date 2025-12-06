@@ -10,13 +10,14 @@ const en = {
     vehicles: "Vehicles",
     clients: "Clients",
     client_detail: "Client Details",
-    appointments: "Appointments",
+    appointments: "Schedule",
     personnel: "Personnel",
     accounting: "Accounting",
     partners: "Partners",
     messages: "Messaging",
-    diagnostics: "AI Diagnostics",
-    inventory: "Inventory"
+    diagnostics: "Diagnostics",
+    inventory: "Inventory",
+    workflow: "Workflow"
   },
   header: {
     view: "View",
@@ -73,6 +74,8 @@ const en = {
     "In Progress": "In Progress",
     Completed: "Completed",
     Cancelled: "Cancelled",
+    "Waiting for Parts": "Waiting for Parts",
+    "Quality Check": "Quality Check",
     Manager: "Manager",
     Mechanic: "Mechanic",
     Receptionist: "Receptionist",
@@ -96,8 +99,8 @@ const en = {
     header_name: "Name",
     header_contact: "Contact",
     header_address: "Address",
-    not_found: "Client Not Found",
-    not_found_description: "Please select a client from the list.",
+    not_found: "Select a Client",
+    not_found_description: "Choose a client from the list to view their full profile, vehicles, and history.",
     back_to_list: "Back to Client List"
   },
   appointments: {
@@ -156,13 +159,13 @@ const en = {
     template_minimal: "Minimal",
     items: "Line Items",
     add_item: "Add Item",
-    item_desc: "Description",
+    item_desc: "Description (e.g. Taxi Ride, Oil Change)",
     due_date: "Due Date",
     generate_pdf: "Generate PDF",
     error_select_client: "Please select a client."
   },
   inventory: {
-    add_new: "Add New Item",
+    add_new: "Add New Inventory Item",
     search_placeholder: "Search inventory...",
     add_button: "Add Item",
     header_item_name: "Item Name",
@@ -174,10 +177,10 @@ const en = {
   diagnostics: {
     title: "AI Diagnostics",
     describe_symptoms: "Describe Symptoms",
-    symptoms_placeholder: "e.g., 'Car hesitates'...",
+    symptoms_placeholder: "e.g., 'Car hesitates', 'AC not cooling'...",
     diagnosing: "Diagnosing...",
     run: "Run Diagnostics",
-    result_title: "Result:",
+    result_title: "Diagnostic Result:",
     error: "An error occurred.",
     obd_connect: "Connect OBD-II",
     obd_disconnect: "Disconnect",
@@ -192,23 +195,23 @@ const en = {
     obd_error_connection: "Connection failed."
   },
   chat: {
-    greeting: "Hello! How can I help?",
-    error: "Error.",
+    greeting: "Hello! I'm IBRA Services AI. How can I help with Taxi, Delivery, or Auto Care?",
+    error: "Sorry, I encountered an error.",
     open: "Open Chat",
     close: "Close Chat",
-    title: "AI Assistant",
-    placeholder: "Ask anything..."
+    title: "IBRA AI",
+    placeholder: "Ask me anything..."
   },
   messages: {
     title: "Messaging",
-    under_construction: "Coming soon."
+    under_construction: "Coming soon for direct driver/mechanic contact."
   },
   forms: {
     add_client_title: "Add New Client",
     label_full_name: "Full Name",
     label_email: "Email Address",
     label_phone: "Phone Number",
-    label_address: "Address",
+    label_address: "Address (for delivery/taxi)",
     button_add_client: "Add Client",
     add_vehicle_title: "Add New Vehicle",
     label_owner: "Owner",
@@ -231,8 +234,8 @@ const en = {
     label_role: "Role",
     role_mechanic: "Mechanic",
     role_manager: "Manager",
-    role_receptionist: "Receptionist",
-    role_detailer: "Detailer",
+    role_receptionist: "Taxi Driver",
+    role_detailer: "Delivery Driver",
     button_add_staff: "Add Staff",
     add_partner_title: "Add New Partner",
     label_partner_name: "Partner Name",
@@ -260,10 +263,10 @@ const en = {
     button_add_item: "Add Item",
     schedule_appointment: "Schedule Service",
     label_client: "Client",
-    label_vehicle: "Vehicle",
+    label_vehicle: "Vehicle (if applicable)",
     placeholder_select_vehicle: "Select a vehicle",
     label_service_type: "Service Type",
-    placeholder_service_type: "e.g., Oil Change",
+    placeholder_service_type: "e.g., Taxi Ride, Oil Change, Delivery...",
     label_datetime: "Date & Time",
     label_assign_mechanic: "Assign Staff",
     placeholder_assign_later: "Assign later",
@@ -282,24 +285,24 @@ const en = {
       description: "DESCRIPTION",
       amount: "AMOUNT",
       total: "Total:",
-      thank_you: "Thank you!",
-      footer: "Garage Pilot"
+      thank_you: "Thank you for your business!",
+      footer: "IBRA Services - By Kabir"
     }
   },
   login: {
     welcome: "Welcome Back",
-    welcome_register: "Join Us",
+    welcome_register: "Join IBRA Services",
     sign_in_prompt: "Sign in to manage your services.",
     register_prompt: "Create an account.",
     sign_in: "Sign In",
     register: "Create Account",
     signing_in: "Signing In...",
-    registering: "Creating...",
-    no_account: "No account?",
-    have_account: "Have an account?",
+    registering: "Creating Account...",
+    no_account: "Don't have an account?",
+    "have_account": "Already have an account?",
     create_account: "Sign Up",
     login_link: "Log In",
-    error_credentials: "Invalid credentials.",
+    error_credentials: "Invalid email or password.",
     error_mismatch: "Passwords do not match."
   },
   vin_scanner: {
@@ -322,7 +325,8 @@ const fr = {
     partners: "Partenaires",
     messages: "Messagerie",
     diagnostics: "Diagnostic IA",
-    inventory: "Inventaire"
+    inventory: "Inventaire",
+    workflow: "Flux de travail"
   },
   header: {
     view: "Vue",
@@ -379,6 +383,8 @@ const fr = {
     "In Progress": "En cours",
     Completed: "Terminé",
     Cancelled: "Annulé",
+    "Waiting for Parts": "En attente de pièces",
+    "Quality Check": "Contrôle qualité",
     Manager: "Gérant",
     Mechanic: "Mécanicien",
     Receptionist: "Réception",
@@ -402,8 +408,8 @@ const fr = {
     header_name: "Nom",
     header_contact: "Contact",
     header_address: "Adresse",
-    not_found: "Client introuvable",
-    not_found_description: "Veuillez sélectionner un client.",
+    not_found: "Sélectionner un client",
+    not_found_description: "Choisissez un client dans la liste pour voir son profil complet, ses véhicules et son historique.",
     back_to_list: "Retour liste"
   },
   appointments: {

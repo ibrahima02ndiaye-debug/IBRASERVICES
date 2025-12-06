@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" translate="no">
   <head>
@@ -62,6 +63,8 @@
       ::-webkit-scrollbar-thumb {
         background-color: #cbd5e1;
         border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
       }
       .dark ::-webkit-scrollbar-thumb {
         background-color: #374151;
@@ -79,8 +82,7 @@
         -moz-osx-font-smoothing: grayscale;
       }
       
-      /* Specific transitions instead of global wildcard for better performance and typing fluidity */
-      button, a, input, select, textarea, .card, .transition-colors {
+      button, a, input, select, textarea, .card {
         transition-property: color, background-color, border-color, opacity, transform, box-shadow;
         transition-duration: 200ms;
         transition-timing-function: ease-in-out;
@@ -112,7 +114,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-100 dark:bg-gray-950 font-sans antialiased text-gray-900 dark:text-gray-100 selection:bg-blue-500 selection:text-white">
+  <body class="bg-gray-100 dark:bg-gray-950 font-sans antialiased text-gray-900 dark:text-gray-100 selection:bg-blue-500 selection:text-white notranslate">
     <div id="root">
         <div class="h-screen w-full flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-950">
             <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
@@ -122,3 +124,4 @@
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
+    

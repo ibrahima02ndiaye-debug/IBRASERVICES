@@ -1,4 +1,4 @@
-import { Request as ExpressRequest, Response, NextFunction } from 'express';
+import { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 export interface AuthenticatedRequest extends ExpressRequest {
@@ -7,9 +7,9 @@ export interface AuthenticatedRequest extends ExpressRequest {
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-default-secret-key';
 
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
   // FIX: Access header via req.headers property as .header() method might be missing in type definition
-  const authHeader = (req as ExpressRequest).headers['authorization'];
+  const authHeader = req.headers['authorization'];
 
   if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Authentication token required.' });

@@ -1,4 +1,4 @@
-import { Client, Vehicle, Appointment, Staff, Partner, FinancialRecord, InventoryItem, Quote } from '../../types';
+import { Client, Vehicle, Appointment, Staff, Partner, FinancialRecord, InventoryItem, Quote, AppointmentStatus } from '../../types';
 
 const API_BASE_URL = '/api';
 
@@ -68,6 +68,7 @@ export const deleteVehicle = (id: string): Promise<void> => apiFetch(`/vehicles/
 export const getAppointments = (): Promise<Appointment[]> => apiFetch('/appointments');
 export const createAppointment = (data: Omit<Appointment, 'id'>): Promise<Appointment> => apiFetch('/appointments', { method: 'POST', body: JSON.stringify(data) });
 export const updateAppointment = (id: string, data: Partial<Appointment>): Promise<Appointment> => apiFetch(`/appointments/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const updateAppointmentStatus = (id: string, status: AppointmentStatus): Promise<Appointment> => apiFetch(`/appointments/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
 export const deleteAppointment = (id: string): Promise<void> => apiFetch(`/appointments/${id}`, { method: 'DELETE' });
 
 export const getStaff = (): Promise<Staff[]> => apiFetch('/personnel');

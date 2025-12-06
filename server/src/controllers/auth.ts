@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { query } from '../db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-default-secret-key';
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: ExpressRequest, res: ExpressResponse) => {
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
@@ -51,7 +51,7 @@ export const register = async (req: Request, res: Response) => {
     }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: ExpressRequest, res: ExpressResponse) => {
     const { email, password } = req.body;
 
     if (!email || !password) {

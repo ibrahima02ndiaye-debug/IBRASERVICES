@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { GoogleGenAI, Chat } from '@google/genai';
+import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { GoogleGenAI, Chat, GenerateContentResponse } from '@google/genai';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable is not set.");
@@ -22,7 +22,7 @@ function initializeChat() {
     });
 }
 
-export const handleChatStream = async (req: Request, res: Response) => {
+export const handleChatStream = async (req: ExpressRequest, res: ExpressResponse) => {
     if (!chat) {
         initializeChat();
     }
@@ -41,7 +41,10 @@ export const handleChatStream = async (req: Request, res: Response) => {
 
         for await (const chunk of stream) {
             // FIX: Access the generated text directly from the 'text' property of the chunk.
-            res.write(chunk.text);
+            const c = chunk as GenerateContentResponse;
+            if (c.text) {
+                res.write(c.text);
+            }
         }
         res.end();
     } catch (error) {

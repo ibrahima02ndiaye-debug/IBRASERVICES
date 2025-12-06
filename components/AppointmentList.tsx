@@ -15,6 +15,8 @@ const statusColorMap: { [key in Appointment['status']]: string } = {
   'In Progress': 'bg-yellow-500/10 text-yellow-500 dark:text-yellow-400 border border-yellow-500/20',
   'Completed': 'bg-green-500/10 text-green-500 dark:text-green-400 border border-green-500/20',
   'Cancelled': 'bg-gray-500/10 text-gray-500 dark:text-gray-400 border border-gray-500/20',
+  'Waiting for Parts': 'bg-orange-500/10 text-orange-500 dark:text-orange-400 border border-orange-500/20',
+  'Quality Check': 'bg-purple-500/10 text-purple-500 dark:text-purple-400 border border-purple-500/20',
 };
 
 interface AppointmentListProps {

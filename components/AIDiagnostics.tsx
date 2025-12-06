@@ -5,8 +5,6 @@ import Card from './common/Card';
 import Button from './common/Button';
 import { CpuIcon, BluetoothIcon } from './icons/Icons';
 
-// This is a placeholder for the actual AI Diagnostics component.
-// In a real application, the Gemini API calls should be made through a secure backend server.
 const AIDiagnostics: React.FC = () => {
   const { t } = useTranslation();
   const [prompt, setPrompt] = useState('');
@@ -16,7 +14,6 @@ const AIDiagnostics: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isReading, setIsReading] = useState(false);
-  // FIX: Replaced BluetoothDevice with 'any' due to missing web-bluetooth types.
   const [device, setDevice] = useState<any | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>(t('diagnostics.obd_not_connected'));
   const [dtcs, setDtcs] = useState<string[]>([]);
@@ -38,7 +35,6 @@ const AIDiagnostics: React.FC = () => {
     setIsConnecting(true);
     setStatusMessage(t('diagnostics.obd_connecting'));
     try {
-      // FIX: Cast navigator to 'any' to access the experimental bluetooth property.
       const obdScanner = await (navigator as any).bluetooth.requestDevice({
         filters: [{ services: ['00001101-0000-1000-8000-00805f9b34fb'] }], // Serial Port Profile
         optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb'], // Common custom service for ELM327
@@ -85,7 +81,6 @@ const AIDiagnostics: React.FC = () => {
         const decoder = new TextDecoder();
         
         const handleNotifications = (event: any) => {
-            // FIX: Replaced BluetoothRemoteGATTCharacteristic with 'any'.
             const value = (event.target as any).value;
             if (value) {
                 responseData += decoder.decode(value);
@@ -112,7 +107,7 @@ const AIDiagnostics: React.FC = () => {
 
   const parseDtcResponse = (data: string) => {
     const cleanData = data.replace(/\s/g, '').replace('>', '');
-    // Explicitly fallback to an empty string array if match returns null
+    // Explicitly fallback to an empty string array type if match returns null
     const lines = cleanData.match(/43[0-9A-Fa-f]+/g) || ([] as string[]);
     
     if (!lines || lines.length === 0) {
@@ -246,3 +241,4 @@ const AIDiagnostics: React.FC = () => {
 };
 
 export default AIDiagnostics;
+    

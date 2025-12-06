@@ -7,6 +7,8 @@ import VehicleList from './components/VehicleList';
 import ClientList from './components/ClientList';
 import ClientDetail from './components/ClientDetail';
 import AppointmentList from './components/AppointmentList';
+import ServiceBoard from './components/ServiceBoard'; // New import
+import CommandPalette from './components/CommandPalette'; // New import
 import PersonnelManager from './components/PersonnelManager';
 import Accounting from './components/Accounting';
 import PartnerList from './components/PartnerList';
@@ -24,6 +26,8 @@ const MainContent: React.FC = () => {
     switch (currentView) {
       case 'dashboard':
         return <Dashboard />;
+      case 'workflow':
+        return <ServiceBoard />; // New View
       case 'vehicles':
         return <VehicleList />;
       case 'clients':
@@ -50,15 +54,16 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-950 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-950">
           {renderView()}
         </main>
       </div>
       <ChatAssistant />
+      <CommandPalette />
       <Modal 
         isOpen={modal.isOpen} 
         onClose={closeModal} 

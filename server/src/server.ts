@@ -6,6 +6,9 @@ import { fileURLToPath } from 'url';
 
 import clientRoutes from './routes/clients';
 import vehicleRoutes from './routes/vehicles';
+import appointmentRoutes from './routes/appointments';
+import accountingRoutes from './routes/accounting';
+import quoteRoutes from './routes/quotes';
 import aiRoutes from './routes/ai';
 import authRoutes from './routes/auth';
 
@@ -27,6 +30,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/accounting', accountingRoutes);
+app.use('/api/quotes', quoteRoutes);
 app.use('/api/ai', aiRoutes);
 
 // Health check

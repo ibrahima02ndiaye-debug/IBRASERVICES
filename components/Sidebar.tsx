@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-// FIX: Use relative paths for imports from other root-level directories.
 import { useAppContext } from '../contexts/AppContext';
 import { View } from '../types';
 import {
@@ -16,6 +14,7 @@ import {
   CpuIcon,
   PackageIcon,
   GarageIcon,
+  CheckCircleIcon
 } from './icons/Icons';
 
 interface NavItemProps {
@@ -24,22 +23,27 @@ interface NavItemProps {
   icon: React.ReactElement;
   currentView: View;
   setCurrentView: (view: View) => void;
+  isCompact?: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({ view, label, icon, currentView, setCurrentView }) => {
   const isActive = currentView === view;
   return (
-    <li>
+    <li className="mb-1">
       <button
         onClick={() => setCurrentView(view)}
-        className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+        className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group relative ${
           isActive
-            ? 'bg-blue-600 text-white shadow-lg transform scale-105'
-            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+            ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20'
+            : 'text-gray-400 hover:bg-gray-800 hover:text-white'
         }`}
       >
-        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-6 h-6' })}
-        <span className="font-semibold tracking-wide">{label}</span>
+        <div className={`transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+            {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: 'w-5 h-5' })}
+        </div>
+        <span className="font-medium text-sm tracking-wide">{label}</span>
+        
+        {isActive && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white/20 rounded-l-full"></div>}
       </button>
     </li>
   );
@@ -50,43 +54,83 @@ const Sidebar: React.FC = () => {
   const { t } = useTranslation();
 
   const garageNavItems = [
-    { view: 'dashboard' as View, label: t('nav.dashboard', 'Tableau de bord'), icon: <DashboardIcon /> },
-    { view: 'appointments' as View, label: t('nav.appointments', 'Rendez-vous'), icon: <CalendarIcon /> },
-    { view: 'clients' as View, label: t('nav.clients', 'Clients'), icon: <UsersIcon /> },
-    { view: 'vehicles' as View, label: t('nav.vehicles', 'Véhicules'), icon: <CarIcon /> },
-    { view: 'inventory' as View, label: t('nav.inventory', 'Inventaire'), icon: <PackageIcon /> },
-    { view: 'diagnostics' as View, label: t('nav.diagnostics', 'Diagnostic IA'), icon: <CpuIcon /> },
-    { view: 'personnel' as View, label: t('nav.personnel', 'Personnel'), icon: <BriefcaseIcon /> },
-    { view: 'accounting' as View, label: t('nav.accounting', 'Comptabilité'), icon: <DollarSignIcon /> },
-    { view: 'partners' as View, label: t('nav.partners', 'Partenaires'), icon: <BuildingIcon /> },
-    { view: 'messages' as View, label: t('nav.messages', 'Messagerie'), icon: <MessageSquareIcon /> },
+    { section: 'Overview', items: [
+        { view: 'dashboard' as View, label: t('nav.dashboard', 'Dashboard'), icon: <DashboardIcon /> },
+        { view: 'workflow' as View, label: 'Workflow', icon: <CheckCircleIcon /> }, // New
+    ]},
+    { section: 'Management', items: [
+        { view: 'appointments' as View, label: t('nav.appointments', 'Schedule'), icon: <CalendarIcon /> },
+        { view: 'clients' as View, label: t('nav.clients', 'Clients'), icon: <UsersIcon /> },
+        { view: 'vehicles' as View, label: t('nav.vehicles', 'Vehicles'), icon: <CarIcon /> },
+        { view: 'inventory' as View, label: t('nav.inventory', 'Inventory'), icon: <PackageIcon /> },
+    ]},
+    { section: 'Operations', items: [
+        { view: 'diagnostics' as View, label: t('nav.diagnostics', 'Diagnostics'), icon: <CpuIcon /> },
+        { view: 'personnel' as View, label: t('nav.personnel', 'Staff'), icon: <BriefcaseIcon /> },
+        { view: 'partners' as View, label: t('nav.partners', 'Vendors'), icon: <BuildingIcon /> },
+    ]},
+    { section: 'Finance', items: [
+        { view: 'accounting' as View, label: t('nav.accounting', 'Finance'), icon: <DollarSignIcon /> },
+    ]},
   ];
 
   const clientNavItems = [
-    { view: 'dashboard' as View, label: t('nav.dashboard', 'Tableau de bord'), icon: <DashboardIcon /> },
-    { view: 'vehicles' as View, label: t('nav.vehicles', 'Véhicules'), icon: <CarIcon /> },
-    { view: 'appointments' as View, label: t('nav.appointments', 'Rendez-vous'), icon: <CalendarIcon /> },
-    { view: 'messages' as View, label: t('nav.messages', 'Messagerie'), icon: <MessageSquareIcon /> },
+    { section: 'My Garage', items: [
+        { view: 'dashboard' as View, label: t('nav.dashboard', 'Dashboard'), icon: <DashboardIcon /> },
+        { view: 'vehicles' as View, label: t('nav.vehicles', 'Vehicles'), icon: <CarIcon /> },
+        { view: 'appointments' as View, label: t('nav.appointments', 'Appointments'), icon: <CalendarIcon /> },
+    ]},
+    { section: 'Support', items: [
+        { view: 'messages' as View, label: t('nav.messages', 'Messages'), icon: <MessageSquareIcon /> },
+    ]}
   ];
 
-  const navItems = userRole === 'Garage' ? garageNavItems : clientNavItems;
+  const navStructure = userRole === 'Garage' ? garageNavItems : clientNavItems;
 
   return (
-    <aside className="w-64 bg-white/70 dark:bg-gray-900/60 backdrop-blur-lg border-r border-gray-200 dark:border-gray-800 flex-shrink-0 flex flex-col p-4 shadow-sm h-screen">
-      <div className="flex items-center space-x-2 px-4 py-2 mb-6">
-        <GarageIcon className="w-9 h-9 text-blue-600 dark:text-blue-500" />
+    <aside className="w-64 bg-[#0F172A] border-r border-gray-800 flex-shrink-0 flex flex-col h-screen text-gray-300">
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-800/50">
+        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <GarageIcon className="w-5 h-5 text-white" />
+        </div>
         <div>
-            <h1 className="text-xl font-bold text-gray-950 dark:text-white leading-tight">IBRA Services</h1>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider">Mécanique & Transport</p>
+            <h1 className="text-base font-bold text-white leading-none tracking-tight">IBRA</h1>
+            <p className="text-[10px] text-blue-400 font-semibold tracking-wider mt-1 uppercase">Service OS</p>
         </div>
       </div>
-      <nav className="flex-1 overflow-y-auto">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <NavItem key={item.view} {...item} currentView={currentView} setCurrentView={setCurrentView} />
-          ))}
-        </ul>
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-6 px-3 custom-scrollbar">
+        {navStructure.map((group, idx) => (
+            <div key={idx} className="mb-6">
+                <h3 className="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{group.section}</h3>
+                <ul>
+                    {group.items.map((item) => (
+                        <NavItem key={item.view} {...item} currentView={currentView} setCurrentView={setCurrentView} />
+                    ))}
+                </ul>
+            </div>
+        ))}
       </nav>
+
+      {/* Footer / User Profile Snippet */}
+      <div className="p-4 border-t border-gray-800/50">
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 border border-gray-500 flex items-center justify-center text-xs font-bold text-white">
+                  IN
+              </div>
+              <div className="text-left flex-1">
+                  <p className="text-xs font-semibold text-white">Ibra Ndiaye</p>
+                  <p className="text-[10px] text-gray-500">Admin</p>
+              </div>
+          </button>
+      </div>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      `}</style>
     </aside>
   );
 };
