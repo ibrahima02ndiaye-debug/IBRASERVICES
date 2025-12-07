@@ -1,0 +1,98 @@
+{
+    "name": "IBRA Services",
+    "short_name": "IBRA",
+    "description": "Garage management AI-powered - Mécanique, Taxi, Livraison & Climatisation",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#030712",
+    "theme_color": "#3b82f6",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "business",
+        "productivity",
+        "automotive"
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-wide.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshot-mobile.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Nouveau Rendez-vous",
+            "short_name": "RDV",
+            "description": "Prendre un rendez-vous",
+            "url": "/appointments?action=new",
+            "icons": [
+                {
+                    "src": "/icon-calendar.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Mes Véhicules",
+            "short_name": "Véhicules",
+            "url": "/vehicles",
+            "icons": [
+                {
+                    "src": "/icon-car.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Factures",
+            "short_name": "Factures",
+            "url": "/accounting",
+            "icons": [
+                {
+                    "src": "/icon-invoice.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "share_target": {
+        "action": "/share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url",
+            "files": [
+                {
+                    "name": "media",
+                    "accept": [
+                        "image/*",
+                        "video/*"
+                    ]
+                }
+            ]
+        }
+    }
+}
