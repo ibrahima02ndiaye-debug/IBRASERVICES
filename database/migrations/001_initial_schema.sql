@@ -1,0 +1,2 @@
+-- Run this after schema.sql to initialize the database structure
+-- This file documents the initial migration
